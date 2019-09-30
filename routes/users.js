@@ -23,19 +23,26 @@ async function loadRss() {
     if (err) { return console.log(err); }
 
     body = body.replaceAll("ht:", "");
+    body = body.replaceAll("+", "");
 
     let parserOptions = { customFields: { item: ['approx_traffic','news_item'] } };
     let parser = new Parser(parserOptions);
 
     let feed = await parser.parseString(body);
-    console.log("==================>feed.items[0]",feed.items[1]);
+  
+    let items = feed.items;
+    items = items.sort((a,b)=>{
+      return Number(b.approx_traffic.replace(",",".")) - Number(a.approx_traffic.replace(",","."));
+    });
+
+    feed.items.forEach(item => {
+      console.log("--------------------------------------------------------------");
+      console.log(`${item.title} (${item.approx_traffic})`);
+      console.log(`Data: ${item.isoDate}`);
+      console.log(`Data: ${item.link}`);
+      console.log(`Data: ${item.pubDate}`);
+    });
   });
-  // feed.items.forEach(item => {
-  //   console.log(item.title + ':' + item.link)
-  // });
-  // console.log("==================>feed.items[0]",feed.items[0]);
-
-
 }
 
 const https = require('https');
