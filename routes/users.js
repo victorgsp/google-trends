@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 let Parser = require('rss-parser');
 const request = require('request');
+const itemModule = require('./modules/models/item.js');
 
 /* GET users listing. */
 router.get('/', async function (req, res, next) {
@@ -18,7 +19,6 @@ String.prototype.replaceAll = function(valueToReplace, newValue){
 }
 
 async function loadRss() {
-
   request('https://trends.google.com.br/trends/trendingsearches/daily/rss?geo=BR', { json: true }, async (err, res, body) => {
     if (err) { return console.log(err); }
 
