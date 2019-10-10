@@ -1,10 +1,16 @@
 const MongoClient = require('mongodb').MongoClient
 const url = 'mongodb://localhost:27017'
+const itemCollectionName = "item";
 
 async function createDatabase(){
-  db = await MongoClient.connect(`${url}/mydb`, { useNewUrlParser: true, useUnifiedTopology: true });
-  db.close();
-  console.log("Database created!");
+  try {
+    db = await MongoClient.connect(`${url}/mydb`, { useNewUrlParser: true, useUnifiedTopology: true });
+    db.close();
+    console.log("Database created!");  
+  } catch (error) {
+    throw error;
+  }
+  
 }
 async function getDbo(){
   try {
@@ -32,7 +38,7 @@ async function createCollection(collectionName){
 async function insertOneCustomers(customer){
   let dbo = await getDbo();
   try {
-    dbo.collection("customers").insertOne(customer);
+    dbo.collection(itemCollectionName).insertOne(customer);
     console.log("1 document inserted");
   } catch (error) {
     throw error;
@@ -44,7 +50,7 @@ async function insertOneCustomers(customer){
 async function findCustomers(){
   var dbo = await getDbo(); 
   try {
-    let customers = dbo.collection("customers").findOne({});
+    let customers = dbo.collection(itemCollectionName).find({}).toArray();
     return customers;
   } catch (error) {
     throw error;
@@ -53,10 +59,10 @@ async function findCustomers(){
 
 async function initDatabase(){
   await createDatabase();
-  await createCollection("customers");
+  await createCollection(itemCollectionName);
   await insertOneCustomers({ name: "Company Inc", address: "Highway 37" });
   let customers = await findCustomers();
-  console.log("==================>customers", customers);
+  console.log("==================>item", customers);
 }
 
 initDatabase();
