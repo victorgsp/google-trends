@@ -1,10 +1,11 @@
 const MongoClient = require('mongodb').MongoClient
 const url = 'mongodb://localhost:27017'
 const itemCollectionName = "item";
+const databaseName = "googletrends";
 
 async function createDatabase(){
   try {
-    db = await MongoClient.connect(`${url}/mydb`, { useNewUrlParser: true, useUnifiedTopology: true });
+    db = await MongoClient.connect(`${url}/${databaseName}`, { useNewUrlParser: true, useUnifiedTopology: true });
     db.close();
     console.log("Database created!");  
   } catch (error) {
@@ -15,7 +16,7 @@ async function createDatabase(){
 async function getDbo(){
   try {
     db = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-    var dbo = db.db("mydb");
+    var dbo = db.db(databaseName);
     dbo.db = db;
     return dbo;
   } catch (error) {
@@ -35,10 +36,10 @@ async function createCollection(collectionName){
   }
 }
 
-async function insertOneCustomers(customer){
+async function insertOneItem(item){
   let dbo = await getDbo();
   try {
-    dbo.collection(itemCollectionName).insertOne(customer);
+    dbo.collection(itemCollectionName).insertOne(item);
     console.log("1 document inserted");
   } catch (error) {
     throw error;
@@ -47,11 +48,11 @@ async function insertOneCustomers(customer){
   }
 }
 
-async function findCustomers(){
+async function findAllItems(){
   var dbo = await getDbo(); 
   try {
-    let customers = dbo.collection(itemCollectionName).find({}).toArray();
-    return customers;
+    let items = dbo.collection(itemCollectionName).find({}).toArray();
+    return items;
   } catch (error) {
     throw error;
   }
@@ -60,9 +61,9 @@ async function findCustomers(){
 async function initDatabase(){
   await createDatabase();
   await createCollection(itemCollectionName);
-  await insertOneCustomers({ name: "Company Inc", address: "Highway 37" });
-  let customers = await findCustomers();
-  console.log("==================>item", customers);
+  await insertOneItem({ name: "Company Inc", address: "Highway 37" });
+  let items = await findAllItems();
+  console.log("==================>item", items);
 }
 
 initDatabase();

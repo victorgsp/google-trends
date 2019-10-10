@@ -24,14 +24,17 @@ async function loadRss() {
 
     let items = await parseXmlToItems(body);
     await saveItems(body);
+    printItems(items);
+  });
+}
 
-    items.forEach(item => {
-      console.log("--------------------------------------------------------------");
-      console.log(`${item.title} (${item.approx_traffic})`);
-      console.log(`Data: ${item.isoDate}`);
-      console.log(`Data: ${item.link}`);
-      console.log(`Data: ${item.pubDate}`);
-    });
+function printItems(items){
+  items.forEach(item => {
+    console.log("--------------------------------------------------------------");
+    console.log(`${item.title} (${item.approx_traffic})`);
+    console.log(`Data: ${item.isoDate}`);
+    console.log(`Data: ${item.link}`);
+    console.log(`Data: ${item.pubDate}`);
   });
 }
 
