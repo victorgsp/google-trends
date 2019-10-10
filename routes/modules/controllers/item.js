@@ -24,6 +24,11 @@ async function loadRss() {
 
 async function printItems() {
     let items = await itemModel.findAllItems();
+
+    items = items.sort((a, b) => {
+        return b.approx_traffic - a.approx_traffic;
+    });
+
     items.forEach(item => {
         console.log("--------------------------------------------------------------");
         console.log(`${item.title} (${item.approx_traffic})`);
@@ -52,10 +57,6 @@ async function parseXmlToItems(body) {
     let items = feed.items;
 
     items = formatValues(items);
-
-    items = items.sort((a, b) => {
-        return b.approx_traffic - a.approx_traffic;
-    });
 
     return items;
 }
