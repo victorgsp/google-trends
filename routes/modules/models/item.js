@@ -48,6 +48,7 @@ async function insertOneItem(item){
   }
 }
 
+module.exports.findAllItems = findAllItems;
 async function findAllItems(){
   var dbo = await getDbo(); 
   try {
@@ -58,12 +59,26 @@ async function findAllItems(){
   }
 }
 
+
+module.exports.insertOrUpdate = insertOrUpdate;
+async function insertOrUpdate(item){
+  let dbo = await getDbo();
+  try {
+    dbo.collection(itemCollectionName).replaceOne({title: item.title}, item, {upsert: true});
+  } catch (error) {
+    throw error;
+  }finally{
+    dbo.db.close();
+  }
+}
+
 async function initDatabase(){
   await createDatabase();
   await createCollection(itemCollectionName);
-  await insertOneItem({ name: "Company Inc", address: "Highway 37" });
+  //await insertOneItem({ name: "Company Inc", address: "Highway 37" });
   let items = await findAllItems();
   console.log("==================>item", items);
+  console.log("==================>COUNT", items.length);
 }
 
 initDatabase();
