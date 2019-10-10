@@ -1,45 +1,62 @@
 const MongoClient = require('mongodb').MongoClient
 const url = 'mongodb://localhost:27017'
 
-MongoClient.connect(`${url}/mydb`, { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
-    if (err) throw err;
-    console.log("Database created!");
-    db.close();
-});
-
-MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function(err, db) {
-    if (err) throw err;
+async function createDatabase(){
+  db = await MongoClient.connect(`${url}/mydb`, { useNewUrlParser: true, useUnifiedTopology: true });
+  db.close();
+  console.log("Database created!");
+}
+async function getDbo(){
+  try {
+    db = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
     var dbo = db.db("mydb");
-    dbo.createCollection("customers", function(err, res) {
-      if (err) throw err;
-      console.log("Collection created!");
-      db.close();
-    });
-  });
-
-  MongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    var dbo = db.db("mydb");
-    var myobj = { name: "Company Inc", address: "Highway 37" };
-    dbo.collection("customers").insertOne(myobj, function(err, res) {
-      if (err) throw err;
-      console.log("1 document inserted");
-      db.close();
-    });
-  });
-
-  MongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    var dbo = db.db("mydb");
-    dbo.collection("customers").findOne({}, function(err, result) {
-      if (err) throw err;
-      console.log(result.name);
-      db.close();
-    });
-  });
-
-module.exports.add = function(item){
-
-   console.log("==================>item", item);
-
+    dbo.db = db;
+    return dbo;
+  } catch (error) {
+    throw error;
+  }
 };
+
+async function createCollection(collectionName){
+  let dbo = await getDbo();  
+  try {
+    await dbo.createCollection(collectionName);  
+    console.log("Collection created!");
+  } catch (error) {
+    throw error;    
+  }finally{
+    dbo.db.close();
+  }
+}
+
+async function insertOneCustomers(customer){
+  let dbo = await getDbo();
+  try {
+    dbo.collection("customers").insertOne(customer);
+    console.log("1 document inserted");
+  } catch (error) {
+    throw error;
+  }finally{
+    dbo.db.close();
+  }
+}
+
+async function findCustomers(){
+  var dbo = await getDbo(); 
+  try {
+    let customers = dbo.collection("customers").findOne({});
+    return customers;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function initDatabase(){
+  await createDatabase();
+  await createCollection("customers");
+  await insertOneCustomers({ name: "Company Inc", address: "Highway 37" });
+  let customers = await findCustomers();
+  console.log("==================>customers", customers);
+}
+
+initDatabase();
