@@ -77,7 +77,6 @@ async function initDatabase(){
   await createCollection(itemCollectionName);
   //await insertOneItem({ name: "Company Inc", address: "Highway 37" });
   let items = await findAllItems();
-  console.log("==================>item", items);
   console.log("==================>COUNT", items.length);
 }
 

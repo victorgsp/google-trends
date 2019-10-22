@@ -36,6 +36,8 @@ async function printItems() {
         console.log(`Data: ${item.link}`);
         console.log(`Data: ${item.pubDate}`);
     });
+
+    console.log(`Quantidade de items salvos: ${items.length}`);
 }
 
 async function saveItems(items) {

@@ -8,6 +8,8 @@ var schedule = require('node-schedule');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+var itemController = require('./routes/modules/controllers/item');
+
 var app = express();
 
 // view engine setup
@@ -40,7 +42,8 @@ app.use(function(err, req, res, next) {
 });
 
 schedule.scheduleJob('10 * * * * *', function(){
-  console.log("-------------");
+  itemController.loadRss();
+  console.log("Pesquisa realizada com sucesso!");
 });
 
 module.exports = app;
